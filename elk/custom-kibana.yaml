@@ -9,13 +9,3 @@ resources:
     cpu: "1000m"
     memory: "512Mi"
 
-ingress:
-  enabled: true
-  className: "nginx"
-  pathtype: ImplementationSpecific
-  hosts:
-    - host: kibana.local
-      paths:
-        - path: /
-  tls: []
-

@@ -31,16 +31,3 @@ env:
       secretKeyRef:
         name: rabbitmq
         key: RABBITMQ_ERLANG_COOKIE
-
-ingress:
-  enabled: true
-  className: "nginx"
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-  hosts:
-    - paths:
-        - path: /rabbitmq(/|$)(.*)
-          pathType: ImplementationSpecific
-          port: 15672
-  tls: []
