@@ -21,3 +21,13 @@ volumeClaimTemplate:
   resources:
     requests:
       storage: 500Mi
+
+ingress:
+  enabled: true
+  className: "nginx"
+  pathtype: ImplementationSpecific
+  hosts:
+    - host: k8s.elasticsearch.local
+      paths:
+        - path: /
+  tls: []
