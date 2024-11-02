@@ -63,7 +63,6 @@ env:
 pvcData:
   accessMode: ReadWriteOnce
   storage: 500Mi
-  storageClassName: standard
 
 service:
   type: ClusterIP
