@@ -10,7 +10,7 @@ resources:
 
 pvcData:
   storage: 125Mi
-  storageClassName: longhorn
+  storageClassName: longhorn-storage-delete
 
 secret:
   enabled: true
