@@ -36,8 +36,7 @@ service:
 ingress:
   enabled: true
   className: "nginx"
-  annotations:
-    kubernetes.io/ingress.class: nginx
+  annotations: {}
   hosts:
   - host: k8s.chatapp.local
     paths:

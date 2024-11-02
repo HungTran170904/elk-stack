@@ -120,12 +120,12 @@ ingress:
   className: "nginx"
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /
   hosts:
     - host: k8s.chatapp.local
       paths:
-        - path: /backend(/|$)(.*)
-          pathType: ImplementationSpecific
+        - path: /backend
+          pathType: Prefix
   tls: []
 
 resources: {}
