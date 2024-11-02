@@ -4,6 +4,7 @@ resources: {}
 
 volumeClaimTemplate:
   accessModes: ["ReadWriteOnce"]
+  storageClassName: longhorn-storage-delete
   resources:
     requests:
       storage: 512Mi

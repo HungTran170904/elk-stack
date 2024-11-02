@@ -17,7 +17,7 @@ resources:
 # Request smaller persistent volumes.
 volumeClaimTemplate:
   accessModes: [ "ReadWriteOnce" ]
-  storageClassName: "standard"
+  storageClassName: longhorn-storage-delete
   resources:
     requests:
       storage: 500Mi
