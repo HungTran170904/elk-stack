@@ -4,7 +4,7 @@
 
 image:
   repository: hungtran679/mt-backend:v2
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
@@ -73,7 +73,9 @@ env:
         name: rabbitmq
         key: RABBITMQ_DEFAULT_PASS
   - name: FRONTEND_URL
-    value: http://chatapp.local
+    value: http://k8s.frontend.chatapp.local
+  - name: MAIN_DOMAIN
+    value: chatapp.local
 
 pvc:
   enabled: false
@@ -118,14 +120,12 @@ service:
 ingress:
   enabled: true
   className: "nginx"
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  annotations: {}
   hosts:
-    - host: k8s.chatapp.local
+    - host: k8s.backend.chatapp.local
       paths:
-        - path: /backend/?(.*)
-          pathType: Prefix
+        - path: /
+          pathType: ImplementationSpecific
   tls: []
 
 resources: {}

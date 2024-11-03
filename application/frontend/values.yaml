@@ -24,7 +24,7 @@ securityContext: {}
 
 env:
   - name: API_ENDPOINT
-    value: /backend
+    value: "http://k8s.backend.chatapp.local"
 
 pvc:
   enabled: false
