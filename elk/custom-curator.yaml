@@ -49,7 +49,7 @@ configMaps:
       3:
         action: delete_indices
         description: >-
-          Delete indices older than 1 day for kubeservice
+          Delete indices older than 7 day for kubeservice
         options:
           ignore_empty_list: True
           disable_action: False
@@ -57,6 +57,23 @@ configMaps:
         - filtertype: pattern
           kind: prefix
           value: logstash-kubeservice-
+        - filtertype: age
+          source: creation_date
+          direction: older
+          unit: days
+          unit_count: 7
+      
+      4:
+        action: delete_indices
+        description: >-
+          Delete indices older than 1 day for other services
+        options:
+          ignore_empty_list: True
+          disable_action: False
+        filters:
+        - filtertype: pattern
+          kind: prefix
+          value: logstash-default-
         - filtertype: age
           source: creation_date
           direction: older
