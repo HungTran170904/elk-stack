@@ -73,7 +73,7 @@ env:
         name: rabbitmq
         key: RABBITMQ_DEFAULT_PASS
   - name: FRONTEND_URL
-    value: http://k8s.frontend.chatapp.local
+    value: http://k8s.frontend.chatapp.local:30080
   - name: MAIN_DOMAIN
     value: chatapp.local
 
@@ -120,7 +120,8 @@ service:
 ingress:
   enabled: true
   className: "nginx"
-  annotations: {}
+  annotations:
+    nginx.org/websocket-services: "backend"
   hosts:
     - host: k8s.backend.chatapp.local
       paths:
