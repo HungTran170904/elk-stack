@@ -44,30 +44,63 @@ logstashPipeline:
         grok {
             add_field => [ "received_at", "%{@timestamp}" ]
         }
+        if "backend" in [tags] or "notification-service" in [tags] {
+           grok {
+            match => { 
+              "message" => 
+                "%{TIMESTAMP_ISO8601:log_timestamp} %{LOGLEVEL:loglevel} %{NUMBER:pid} --- \[%{DATA:service}\] \[%{DATA:thread}\] %{JAVACLASS:class} +: %{GREEDYDATA:message}" 
+            }
+          }
+          date {
+            match => [ "log_timestamp", "ISO8601" ]
+          }
+        }
     }
     output {
       if "myopensource" in [tags] {
-        elasticsearch {
-          hosts => [ "elasticsearch-master:9200" ]
-          index => "logstash_myopensource_%{+YYYY.MM.dd}"
+        if "mysql" in [tags] {
+          elasticsearch {
+            hosts => [ "elasticsearch-master:9200" ]
+            index => "myopensource_mysql_%{+YYYY.MM.dd}"
           }
+        }
+        else if "rabbitmq" in [tags] {
+          elasticsearch {
+            hosts => [ "elasticsearch-master:9200" ]
+            index => "myopensource_rabbitmq_%{+YYYY.MM.dd}"
+          }
+        }
       }
       else if "myservice" in [tags] {
-        elasticsearch {
-          hosts => [ "elasticsearch-master:9200" ]
-          index => "logstash_myservice_%{+YYYY.MM.dd}"
-         }
+        if "frontend" in [tags] {
+          elasticsearch {
+            hosts => [ "elasticsearch-master:9200" ]
+            index => "myservice_frontend_%{+YYYY.MM.dd}"
+          }
+        }
+        else if "backend" in [tags] {
+          elasticsearch {
+            hosts => [ "elasticsearch-master:9200" ]
+            index => "myservice_backend_%{+YYYY.MM.dd}"
+          }
+        }
+        else if "notification-service" in [tags]{
+            elasticsearch {
+                hosts => [ "elasticsearch-master:9200" ]
+                index => "myservice_notification_service_%{+YYYY.MM.dd}"
+            }
+        }
       }
       else if "kubeservice" in [tags] {
         elasticsearch {
           hosts => [ "elasticsearch-master:9200" ]
-          index => "logstash_kubeservice_%{+YYYY.MM.dd}"
+          index => "kubeservice_%{+YYYY.MM.dd}"
          }
       }
       else {
         elasticsearch {
           hosts => [ "elasticsearch-master:9200" ]
-          index => "logstash_default_%{+YYYY.MM.dd}"
+          index => "default_%{+YYYY.MM.dd}"
          }
       }
     }
