@@ -5,7 +5,7 @@
 replicaCount: 2
 
 image:
-  repository: "rabbitmq:3.8"
+  repository: "rabbitmq:3.13.7-management"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
