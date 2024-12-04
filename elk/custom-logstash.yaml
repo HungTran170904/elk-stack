@@ -42,7 +42,10 @@ logstashPipeline:
     }
     filter {
         grok {
-            add_field => [ "received_at", "%{@timestamp}" ]
+            add_field => { 
+              "received_at" => "%{@timestamp}" 
+              "environment" => "production"
+            }
         }
         if "backend" in [tags] or "notification-service" in [tags] {
            grok {
@@ -57,6 +60,7 @@ logstashPipeline:
         }
     }
     output {
+      stdout { codec => rubydebug }
       if "myopensource" in [tags] {
         if "mysql" in [tags] {
           elasticsearch {
