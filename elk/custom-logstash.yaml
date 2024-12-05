@@ -49,30 +49,30 @@ logstashPipeline:
       if [service] == "frontend" {
         grok {
           match => {
-            "message" => "%{YEAR:message_year}/%{MONTHNUM:message_month}/%{MONTHDAY:message_day} %{TIME:message_time} \\[%{WORD:message_loglevel}\\] %{NUMBER:message_pid}#%{NUMBER:message_worker}: %{GREEDYDATA:message_content}"
+            "message" => "%{YEAR:mess_detail.year}/%{MONTHNUM:mess_detail.month}/%{MONTHDAY:mess_detail.day} %{TIME:mess_detail.time} \[%{WORD:mess_detail.loglevel}\] %{NUMBER:mess_detail.pid}#%{NUMBER:mess_detail.worker}: %{GREEDYDATA:mess_detail.content}"
           }
         }
       } else if [service] == "backend" or [service] == "notification-service" {
         grok {
           match => {
-            "message" => "%{TIMESTAMP_ISO8601:message_timestamp}\\s+%{LOGLEVEL:message_loglevel} %{NUMBER:message_pid} --- \\[%{DATA:message_service}\\] \\[\\s+%{DATA:message_thread}\\] %{DATA:message_class}\\s+:\\s+%{GREEDYDATA:message_content}"
+            "message" => "%{TIMESTAMP_ISO8601:mess_detail.timestamp}\s+%{LOGLEVEL:mess_detail.loglevel} %{NUMBER:mess_detail.pid} --- \[%{DATA:mess_detail.service}\] \[%{DATA:mess_detail.thread}\] %{DATA:mess_detail.class}\s+:\s+%{GREEDYDATA:mess_detail.content}"
           }
         }
       } else if [service] == "rabbitmq" {
         grok {
           match => {
-            "message" => "%{TIMESTAMP_ISO8601:message_timestamp} \\[%{WORD:message_loglevel}\\] <%{DATA:message_pid}> %{GREEDYDATA:message_content}"
+            "message" => "%{TIMESTAMP_ISO8601:mess_detail.timestamp} \[%{WORD:mess_detail.loglevel}\] <%{DATA:mess_detail.pid}> %{GREEDYDATA:mess_detail.content}"
           }
         }
       } else if [service] == "mysql" {
         grok {
           match => {
-            "message" => "%{TIMESTAMP_ISO8601:message_timestamp} %{NUMBER:message_pid} \\[%{WORD:message_loglevel}\\] \\[%{DATA:message_code}\\] \\[%{WORD:message_component}\\] %{GREEDYDATA:message_content}"
+            "message" => "%{TIMESTAMP_ISO8601:mess_detail.timestamp} %{NUMBER:mess_detail.pid} \[%{WORD:mess_detail.loglevel}\] \[%{DATA:mess_detail.code}\] \[%{WORD:mess_detail.component}\] %{GREEDYDATA:mess_detail.content}"
           }
         }
       }
 
-      if [message_loglevel] and [message_loglevel] =~ /(?i)error/ {
+      if [mess_detail.loglevel] and [mess_detail.loglevel] =~ /(?i)error/ {
         aggregate {
           task_id => "%{service}"
           code => "map['error_count'] ||= 0; map['error_count'] += 1"
