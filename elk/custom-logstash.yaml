@@ -41,7 +41,7 @@ logstashPipeline:
         }
     }
     filter {
-        grok {
+        mutate {
             add_field => { 
               "received_at" => "%{@timestamp}" 
               "environment" => "production"
@@ -51,7 +51,7 @@ logstashPipeline:
            grok {
             match => { 
               "message" => 
-                "%{TIMESTAMP_ISO8601:log_timestamp} %{LOGLEVEL:loglevel} %{NUMBER:pid} --- \[%{DATA:service}\] \[%{DATA:thread}\] %{JAVACLASS:class} +: %{GREEDYDATA:message}" 
+                "%{TIMESTAMP_ISO8601:timestamp}\s+%{LOGLEVEL:loglevel} %{NUMBER:pid} --- \[%{DATA:service}\] \[\s+%{DATA:thread}\] %{DATA:class}\s+:\s+%{GREEDYDATA:main_message}" 
             }
           }
           date {
