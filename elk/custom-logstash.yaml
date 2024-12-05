@@ -121,7 +121,7 @@ logstashPipeline:
           address => "smtp.gmail.com"
           port => 587
           user_name => "tienhung17092004@gmail.com"
-          password => "m h o m p y h b j t m a h d b k"
+          password => "abc"
           authentication => "plain"
           use_tls => true
         }
