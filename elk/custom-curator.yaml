@@ -45,25 +45,8 @@ configMaps:
           direction: older
           unit: days
           unit_count: 7
-
-      3:
-        action: delete_indices
-        description: >-
-          Delete indices older than 7 day for kubeservice
-        options:
-          ignore_empty_list: True
-          disable_action: False
-        filters:
-        - filtertype: pattern
-          kind: prefix
-          value: kubeservice_
-        - filtertype: age
-          source: creation_date
-          direction: older
-          unit: days
-          unit_count: 7
       
-      4:
+      3:
         action: delete_indices
         description: >-
           Delete indices older than 1 day for other services
