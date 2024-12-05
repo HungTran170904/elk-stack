@@ -43,7 +43,8 @@ logstashPipeline:
     filter {
         mutate {
             add_field => { 
-              "environment" => "production"
+              "environment" => "production",
+              "received_at" => "%{@timestamp}"
             }
         }
         
@@ -78,19 +79,6 @@ logstashPipeline:
               match => [ "message.timestamp", "ISO8601" ]
             }
           }
-      
-        if "myopensource" in [tags] or "myservice" in [tags] {
-          if [loglevel] and [loglevel] =~ /(?i)error/ {
-            aggregate {
-              task_id => "%{tags[1]}_%{loglevel}"
-              code => "map['error_count'] ||= 0; map['error_count'] += 1"
-              push_map_as_event_on_timeout => true
-              timeout => 60
-              timeout_tags => ["_aggregatetimeout"]
-              timeout_code => "event.set('error_count', map['error_count'])"
-            }
-          }
-        }
     }
     output {
       if "myopensource" in [tags] {
@@ -110,20 +98,5 @@ logstashPipeline:
           hosts => [ "elasticsearch-master:9200" ]
           index => "default_%{+YYYY.MM.dd}"
          }
-      }
-
-      if [error_count] and [error_count] > 10 {
-        email {
-          to => "22520527@gm.uti.edu.vn"
-          from => "tienhung17092004@gmail.com"
-          subject => "Logstash Alert: More than 10 ERROR logs in a minute from service %{tags[1]}"
-          body => "There have been %{error_count} ERROR logs in the past minute from service %{tags[1]}."
-          address => "smtp.gmail.com"
-          port => 587
-          user_name => "tienhung17092004@gmail.com"
-          password => "abc"
-          authentication => "plain"
-          use_tls => true
-        }
       }
     }
