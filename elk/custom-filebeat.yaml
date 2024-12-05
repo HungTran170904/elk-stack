@@ -5,7 +5,10 @@ daemonset:
       - type: container
         paths:
           - /var/log/containers/mysql*.log
-        tags: ["myopensource", "mysql"]
+        tags: ["myopensource"]
+        fields:
+          service: mysql
+        fields_under_root: true
         processors:
         - add_kubernetes_metadata:
             host: ${NODE_NAME}
@@ -15,7 +18,10 @@ daemonset:
       - type: container
         paths:
           - /var/log/containers/rabbitmq*.log
-        tags: ["myopensource", "rabbitmq"]
+        tags: ["myopensource"]
+        fields:
+          service: rabbitmq
+        fields_under_root: true
         processors:
         - add_kubernetes_metadata:
             host: ${NODE_NAME}
@@ -25,7 +31,10 @@ daemonset:
       - type: container
         paths:
           - /var/log/containers/backend*.log
-        tags: ["myservice","backend"]
+        tags: ["myservice"]
+        fields:
+          service: backend
+        fields_under_root: true
         processors:
         - add_kubernetes_metadata:
             host: ${NODE_NAME}
@@ -35,7 +44,10 @@ daemonset:
       - type: container
         paths:
           - /var/log/containers/frontend*.log
-        tags: ["myservice","frontend"]
+        tags: ["myservice"]
+        fields:
+          service: frontend       
+        fields_under_root: true
         processors:
         - add_kubernetes_metadata:
             host: ${NODE_NAME}
@@ -45,7 +57,10 @@ daemonset:
       - type: container
         paths:
           - /var/log/containers/notification-service*.log
-        tags: ["myservice","notification-service"]
+        tags: ["myservice"]
+        fields:
+          service: notification-service
+        fields_under_root: true
         processors:
         - add_kubernetes_metadata:
             host: ${NODE_NAME}
