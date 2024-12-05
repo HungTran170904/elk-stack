@@ -22,7 +22,7 @@ configMaps:
         filters:
         - filtertype: pattern
           kind: prefix
-          value: logstash-myservice-
+          value: myservice_
         - filtertype: age
           source: creation_date
           direction: older
@@ -39,7 +39,7 @@ configMaps:
         filters:
         - filtertype: pattern
           kind: prefix
-          value: logstash-myopensource-
+          value: myopensource_
         - filtertype: age
           source: creation_date
           direction: older
@@ -56,7 +56,7 @@ configMaps:
         filters:
         - filtertype: pattern
           kind: prefix
-          value: logstash-kubeservice-
+          value: kubeservice_
         - filtertype: age
           source: creation_date
           direction: older
@@ -73,7 +73,7 @@ configMaps:
         filters:
         - filtertype: pattern
           kind: prefix
-          value: logstash-default-
+          value: default_
         - filtertype: age
           source: creation_date
           direction: older

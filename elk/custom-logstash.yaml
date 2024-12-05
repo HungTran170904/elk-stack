@@ -43,68 +43,87 @@ logstashPipeline:
     filter {
         mutate {
             add_field => { 
-              "received_at" => "%{@timestamp}" 
               "environment" => "production"
             }
         }
-        if "backend" in [tags] or "notification-service" in [tags] {
-           grok {
-            match => { 
-              "message" => 
-                "%{TIMESTAMP_ISO8601:timestamp}\s+%{LOGLEVEL:loglevel} %{NUMBER:pid} --- \[%{DATA:service}\] \[\s+%{DATA:thread}\] %{DATA:class}\s+:\s+%{GREEDYDATA:main_message}" 
+        
+        if "frontend" in [tags] {
+            grok {
+              match => {
+                "message" => "%{YEAR:message.year}/%{MONTHNUM:message.month}/%{MONTHDAY:message.day} %{TIME:message.time} \[%{WORD:message.loglevel}\] %{NUMBER:message.pid}#%{NUMBER:message.worker}: %{GREEDYDATA:message.main_message}"
+              }
+            }
+          } else if "backend" in [tags] or "notification-service" in [tags] {
+            grok {
+              match => { 
+                "message" => "%{TIMESTAMP_ISO8601:message.timestamp}\s+%{LOGLEVEL:message.loglevel} %{NUMBER:message.pid} --- \[%{DATA:message.service}\] \[\s+%{DATA:message.thread}\] %{DATA:message.class}\s+:\s+%{GREEDYDATA:message.main_message}" 
+              }
+            }
+          } else if "rabbitmq" in [tags] {
+            grok {
+              match => {
+                "message" => "%{TIMESTAMP_ISO8601:message.timestamp} \[%{WORD:message.loglevel}\] <%{DATA:message.pid}> %{GREEDYDATA:message.main_message}"
+              }
+            }
+          } else if "mysql" in [tags] {
+            grok {
+              match => {
+                "message" => "%{TIMESTAMP_ISO8601:message.timestamp} %{NUMBER:message.pid} \[%{WORD:message.loglevel}\] \[%{DATA:message.code}\] \[%{WORD:message.component}\] %{GREEDYDATA:message.main_message}"
+              }
             }
           }
-          date {
-            match => [ "log_timestamp", "ISO8601" ]
+        
+        if [message.timestamp] {
+            date {
+              match => [ "message.timestamp", "ISO8601" ]
+            }
+          }
+      
+        if "myopensource" in [tags] or "myservice" in [tags] {
+          if [loglevel] and [loglevel] =~ /(?i)error/ {
+            aggregate {
+              task_id => "%{tags[1]}_%{loglevel}"
+              code => "map['error_count'] ||= 0; map['error_count'] += 1"
+              push_map_as_event_on_timeout => true
+              timeout => 60
+              timeout_tags => ["_aggregatetimeout"]
+              timeout_code => "event.set('error_count', map['error_count'])"
+            }
           }
         }
     }
     output {
-      stdout { codec => rubydebug }
       if "myopensource" in [tags] {
-        if "mysql" in [tags] {
           elasticsearch {
             hosts => [ "elasticsearch-master:9200" ]
-            index => "myopensource_mysql_%{+YYYY.MM.dd}"
+            index => "myopensource_%{tags[1]}_%{+YYYY.MM.dd}"
           }
-        }
-        else if "rabbitmq" in [tags] {
-          elasticsearch {
-            hosts => [ "elasticsearch-master:9200" ]
-            index => "myopensource_rabbitmq_%{+YYYY.MM.dd}"
-          }
-        }
       }
       else if "myservice" in [tags] {
-        if "frontend" in [tags] {
           elasticsearch {
             hosts => [ "elasticsearch-master:9200" ]
-            index => "myservice_frontend_%{+YYYY.MM.dd}"
+            index => "myservice_%{tags[1]}_%{+YYYY.MM.dd}"
           }
-        }
-        else if "backend" in [tags] {
-          elasticsearch {
-            hosts => [ "elasticsearch-master:9200" ]
-            index => "myservice_backend_%{+YYYY.MM.dd}"
-          }
-        }
-        else if "notification-service" in [tags]{
-            elasticsearch {
-                hosts => [ "elasticsearch-master:9200" ]
-                index => "myservice_notification_service_%{+YYYY.MM.dd}"
-            }
-        }
-      }
-      else if "kubeservice" in [tags] {
-        elasticsearch {
-          hosts => [ "elasticsearch-master:9200" ]
-          index => "kubeservice_%{+YYYY.MM.dd}"
-         }
       }
       else {
         elasticsearch {
           hosts => [ "elasticsearch-master:9200" ]
           index => "default_%{+YYYY.MM.dd}"
          }
+      }
+
+      if [error_count] and [error_count] > 10 {
+        email {
+          to => "22520527@gm.uti.edu.vn"
+          from => "tienhung17092004@gmail.com"
+          subject => "Logstash Alert: More than 10 ERROR logs in a minute from service %{tags[1]}"
+          body => "There have been %{error_count} ERROR logs in the past minute from service %{tags[1]}."
+          address => "smtp.gmail.com"
+          port => 587
+          user_name => "tienhung17092004@gmail.com"
+          password => "m h o m p y h b j t m a h d b k"
+          authentication => "plain"
+          use_tls => true
+        }
       }
     }
