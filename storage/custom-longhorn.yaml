@@ -1,0 +1,22 @@
+defaultSettings:
+  defaultDataPath: /data/longhorn-storage/
+  replicaSoftAntiAffinity: true
+  storageMinimalAvailablePercentage: 15
+  upgradeChecker: false
+  defaultReplicaCount: 2
+  backupstorePollInterval: 500
+  nodeDownPodDeletionPolicy: do-nothing
+  guaranteedEngineManagerCPU: 15
+  guaranteedReplicaManagerCPU: 15
+
+ingress:
+  enabled: true
+  ingressClassName: "nginx"
+  host: k8s.longhorn.local
+  pathType: ImplementationSpecific
+  path: /
+
+
+enablePSP: false
+
+namespaceOverride: "storage"
