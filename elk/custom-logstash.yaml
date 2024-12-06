@@ -103,11 +103,11 @@ logstashPipeline:
     }
 
     output{
-      if [error_service] and [error_count] > 10 {
+      if [error_service] and [error_count] > 3 {
         email {
           to => "22520527@gm.uit.edu.vn"
           from => "tienhung17092004@gmail.com"
-          subject => "Logstash Alert: More than 10 ERROR logs in a minute from service %{error_service}"
+          subject => "Logstash Alert: More than 3 ERROR logs in a minute from service %{error_service}"
           body => "There have been %{error_count} logs in the past minute from service %{error_service}."
           address => "smtp.gmail.com"
           port => 587
