@@ -100,6 +100,12 @@ logstashPipeline:
           index => "default_%{+YYYY.MM.dd}"
         }
       }
+      if [error_service] {
+        elasticsearch {
+          hosts => ["elasticsearch-master:9200"]
+          index => "errorlog_count"
+        }
+      }
     }
 
     output{
