@@ -103,7 +103,7 @@ logstashPipeline:
       else if [error_service] {
         elasticsearch {
           hosts => ["elasticsearch-master:9200"]
-          index => "errorlog_count"
+          index => "errorlog_count_%{+YYYY.MM.dd}"
         }
       }
     }
