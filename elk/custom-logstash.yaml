@@ -84,7 +84,13 @@ logstashPipeline:
     }
 
     output {
-      if "myopensource" in [tags] {
+      if [error_service] {
+        elasticsearch {
+          hosts => ["elasticsearch-master:9200"]
+          index => "errorlog_count_%{+YYYY.MM.dd}"
+        }
+      }
+      else if "myopensource" in [tags] {
         elasticsearch {
           hosts => ["elasticsearch-master:9200"]
           index => "myopensource_%{service}_%{+YYYY.MM.dd}"
@@ -98,12 +104,6 @@ logstashPipeline:
         elasticsearch {
           hosts => ["elasticsearch-master:9200"]
           index => "default_%{+YYYY.MM.dd}"
-        }
-      }
-      else if [error_service] {
-        elasticsearch {
-          hosts => ["elasticsearch-master:9200"]
-          index => "errorlog_count_%{+YYYY.MM.dd}"
         }
       }
     }
