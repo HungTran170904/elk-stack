@@ -5,7 +5,7 @@
 replicaCount: 2
 
 image:
-  repository: "rabbitmq:3.13.7-management"
+  repository: "rabbitmq:3.7.17-management"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -88,17 +88,17 @@ resources: {}
 
 readinessProbe:
   exec:
-    command: ["rabbitmq-diagnostics", "ping"]
+    command: ["rabbitmqctl", "status"]
   initialDelaySeconds: 20
   periodSeconds: 60
-  timeoutSeconds: 10
+  timeoutSeconds: 30
 
 livenessProbe:
   exec:
-    command: ["rabbitmq-diagnostics", "status"]
+    command: ["rabbitmqctl", "status"]
   initialDelaySeconds: 60
   periodSeconds: 60
-  timeoutSeconds: 15
+  timeoutSeconds: 30
 
 nodeSelector: {}
 
