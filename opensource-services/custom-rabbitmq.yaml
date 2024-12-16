@@ -9,7 +9,7 @@ resources:
     memory: "512Mi"
 
 pvcData:
-  storage: 125Mi
+  storage: 512Mi
   storageClassName: longhorn-storage-delete
 
 secret:
