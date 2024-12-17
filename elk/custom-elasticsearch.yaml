@@ -1,6 +1,6 @@
-replicas: 2
+replicas: 3
 
-antiAffinity: "hard"
+antiAffinity: "soft"
 
 # Shrink default JVM heap.
 esJavaOpts: "-Xmx128m -Xms128m"
@@ -20,7 +20,7 @@ volumeClaimTemplate:
   storageClassName: longhorn-storage-delete
   resources:
     requests:
-      storage: 500Mi
+      storage: 512Mi
 
 ingress:
   enabled: true
