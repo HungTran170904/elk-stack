@@ -97,14 +97,14 @@ serviceAccount:
 
 readinessProbe:
   exec:
-    command: ["rabbitmq-diagnostics", "ping"]
+    command: ["rabbitmq-diagnostics", "check_running", "--quiet"]
   initialDelaySeconds: 20
   periodSeconds: 60
   timeoutSeconds: 30
 
 livenessProbe:
   exec:
-    command: ["rabbitmq-diagnostics", "ping"]
+    command: ["rabbitmq-diagnostics", "ping", "--quiet"]
   initialDelaySeconds: 60
   periodSeconds: 60
   timeoutSeconds: 30
