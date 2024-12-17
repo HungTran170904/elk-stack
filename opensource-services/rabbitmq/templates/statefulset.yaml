@@ -79,8 +79,6 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- with .Values.env }}
           env:
-            - name: RABBITMQ_USE_LONGNAME
-              value: "true"
             {{- toYaml . | nindent 12}}
           {{- end}}
           {{- with .Values.resources }}
